@@ -1,0 +1,10 @@
+create database UserGroups
+use database UserGroups
+CREATE TABLE Users (user_id INT PRIMARY KEY, user_name VARCHAR(20))
+insert into Users (user_id, name) values (1,'foo'), (2,'bar'), (3,'foobar'), (4,'barfoo'), (5,'savyas'), (6,'cgrandhi') 
+CREATE TABLE Groups (user_id INT, group_id INT, group_name VARCHAR(20))
+insert into Groups (user_id, group_id, group_name) values (1, 1, 'foos'), (3, 1, 'foos'), (4, 1, 'foos'), (5, 2, 'TAs'), (6, 2, 'TAs'), (7, 3, 'Professors')
+select user_name, group_name from Users right join Groups on Users.user_id=Groups.user_id
+select user_name, group_name from Users left join Groups on Users.user_id=Groups.user_id
+quit
+

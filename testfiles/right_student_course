@@ -1,0 +1,8 @@
+create database Rightstudentcourse
+use database Rightstudentcourse
+CREATE TABLE Students (Pid INT PRIMARY KEY, Studentname VARCHAR(100), ZIPCODE INT)
+insert into Students (Pid,Studentname,ZIPCODE) values (1,'foo',90091), (3,'bar',90083), (4,'foobar',90080), (6,'Tom',90096), (7,'Lucy',90098), (9,'Patricia',90089),(10,'Barbara',90095)
+CREATE TABLE Courses (Pid INT PRIMARY KEY, CourseNo VARCHAR(50))
+insert into Courses (Pid, CourseNo) values (1,'ECE141A'), (3,'ECE141B'), (4,'CSE100'), (6,'CSE101'), (7,'ECE100'), (11,'ECE17'), (12,'ECE20')
+select Studentname, CourseNo from Students right join Courses on Students.Pid=Courses.Pid
+quit
