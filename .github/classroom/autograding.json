@@ -1,0 +1,34 @@
+{
+  "tests": [
+    {
+      "name": "Left Student-Course",
+      "setup": "make",
+      "run": "export DB_PATH=/tmp && ./autograder < testfiles/left_student_course",
+      "input": "",
+      "output": "7 rows in set",
+      "comparison": "included",
+      "timeout": 1,
+      "points": 0
+    },
+    {
+      "name": "Right Student-course",
+      "setup": "make",
+      "run": "export DB_PATH=/tmp && ./autograder < testfiles/right_student_course",
+      "input": "",
+      "output": "7 rows in set",
+      "comparison": "included",
+      "timeout": 1,
+      "points": 0
+    },
+    {
+      "name": "Test UserGroups",
+      "setup": "make",
+      "run": "export DB_PATH=/tmp && ./autograder < testfiles/user_groups",
+      "input": "",
+      "output": "",
+      "comparison": "included",
+      "timeout": 10,
+      "points": null
+    }
+  ]
+}
