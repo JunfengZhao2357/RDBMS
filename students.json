@@ -1,0 +1,19 @@
+{
+  "course": "ECE141b",
+  "term"  : "SP20",
+  "assignment" : 9,
+  "students": [
+    {
+      "name " : "Junfeng Zhao",
+      "pid"   : "A53321862",
+      "email" : "juz016@eng.ucsd.edu",
+      "os"    : "mac"
+    },
+   {
+     "name " : "Yuchen Xing",
+     "pid"   : "A53312893",
+     "email" : "yuxing@eng.ucsd.edu",
+     "os"    : "mac"
+   }
+  ]
+}
