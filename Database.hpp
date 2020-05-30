@@ -10,9 +10,9 @@
 #define Database_hpp
 
 #include "Filters.hpp"
+#include "Index.hpp"
 #include "Schema.hpp"
 #include "Storage.hpp"
-#include "Index.hpp"
 #include <filesystem>
 #include <iostream>
 #include <map>
@@ -45,11 +45,16 @@ public:
   StatusResult deleteFrom(std::string aName);
   StatusResult selectFrom(Schema *schemaPtr, std::vector<std::string> fieldList,
                           int limitNum, std::string orderBy,
-                          Expressions expressionList);
+                          Expressions expressionList, std::vector<Join> joins);
   StatusResult updateRecords(Schema *schemaPtr, Expression *setExpr,
                              Expressions whereExprs, Operators op);
   StatusResult showIndexes();
-  
+
+  std::vector<Row> leftJoin(std::vector<Row> &lrc, std::vector<Row> &rrc,
+                        Join &theJoin);
+  std::vector<Row> rightJoin(std::vector<Row> &lrc, std::vector<Row> &rrc,
+                         Join &theJoin);
+
 public:
   std::string rootPath;
   std::string dbName;

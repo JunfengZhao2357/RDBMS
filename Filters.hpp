@@ -81,6 +81,50 @@ protected:
   Expressions expressions;
 };
 
+class TableField {
+public:
+  TableField(std::string aStr) : originString(aStr) {}
+
+  TableField &operator=(TableField aTableField) {
+    originString = aTableField.originString;
+    tableName = aTableField.tableName;
+    fieldName = aTableField.fieldName;
+    return *this;
+  }
+
+  TableField &parse() {
+    size_t dotpos = originString.find('.');
+    if (dotpos == originString.npos) {
+      return *this;
+    }
+    tableName = originString.substr(0, dotpos);
+    fieldName = originString.substr(dotpos + 1);
+    return *this;
+  }
+
+  std::string originString;
+  std::string tableName;
+  std::string fieldName;
+};
+
+class Join {
+public:
+  Join(const std::string &aTable, Keywords aType, const std::string &aLHS,
+       const std::string &aRHS)
+      : tableName(aTable), joinType(aType), onLeft(aLHS), onRight(aRHS) {}
+
+  void swaplr() {
+    if (onLeft.tableName == this->tableName) {
+      TableField temp = onLeft;
+      onLeft = onRight;
+      onRight = temp;
+    }
+  }
+  std::string tableName;
+  Keywords joinType;
+  TableField onLeft;
+  TableField onRight;
+};
 } // namespace ECE141
 
 #endif /* Filters_h */

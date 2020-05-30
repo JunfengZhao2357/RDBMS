@@ -9,20 +9,19 @@
 #include "Database.hpp"
 #include "Row.hpp"
 #include "Storage.hpp"
-#include "View.hpp"
 #include "Value.hpp"
+#include "View.hpp"
 #include <algorithm>
+#include <map>
 #include <sstream>
 #include <vector>
-#include <map>
 
 // this class represents the database object.
 // This class should do actual database related work,
 // we called upon by your db processor or commands
 
 namespace ECE141 {
- //using string_hash = std::hash<std::string>;
-
+// using string_hash = std::hash<std::string>;
 
 Database::Database(const std::string aName, CreateNewStorage)
     : dbName(aName), storage(aName, CreateNewStorage()) {
@@ -42,14 +41,18 @@ StatusResult Database::createDatabase(const std::string &aName) {
   MetaBlock.map[0] = static_cast<char>(MetaBlock.getType());
   storage.save(MetaBlock, 0);
 
-  Index schemas_Index(std::string("SchemasIndex"),string_hash(std::string("SchemasIndex")),DataType::int_type);
-  Index indexes_Index(std::string("IndexesIndex"),string_hash(std::string("IndexesIndex")),DataType::int_type);
+  Index schemas_Index(std::string("SchemasIndex"),
+                      string_hash(std::string("SchemasIndex")),
+                      DataType::int_type);
+  Index indexes_Index(std::string("IndexesIndex"),
+                      string_hash(std::string("IndexesIndex")),
+                      DataType::int_type);
   StatusResult aResult = storage.findFreeBlockNum(schemas_Index);
   schemas_Index.setBlockNum(aResult.value);
-  storage.save(schemas_Index,aResult.value);
+  storage.save(schemas_Index, aResult.value);
   StatusResult anotherResult = storage.findFreeBlockNum(indexes_Index);
   indexes_Index.setBlockNum(anotherResult.value);
-  storage.save(indexes_Index,anotherResult.value);
+  storage.save(indexes_Index, anotherResult.value);
 
   return StatusResult(noError);
 }
@@ -128,89 +131,91 @@ StatusResult Database::createTable(const Schema &aSchema) {
 
   // update index of schemas
   Index schemasIndex;
-  storage.load(MetaBlock,0);
-  for(auto element:MetaBlock.map){
-      Index schemasIndex_copy;
-      if(element.second=='I'){
-          //startblock = element.first;
-          StorageBlock aBlock;
-          storage.readBlock(aBlock,element.first);
-          if(aBlock.header.pos==0){
-              storage.load(schemasIndex_copy,element.first);
-              if(schemasIndex_copy.getFieldName()==std::string("SchemasIndex")){
-                  MetaBlock.map[element.first] = 'F';
-                  while (aBlock.header.next) {
-                      uint32_t number = aBlock.header.next;
-                      storage.readBlock(aBlock, number);
-                      MetaBlock.map[number] = 'F';
-                  }
-                  schemasIndex = schemasIndex_copy;
-                  break;
-
-              }
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index schemasIndex_copy;
+    if (element.second == 'I') {
+      // startblock = element.first;
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(schemasIndex_copy, element.first);
+        if (schemasIndex_copy.getFieldName() == std::string("SchemasIndex")) {
+          MetaBlock.map[element.first] = 'F';
+          while (aBlock.header.next) {
+            uint32_t number = aBlock.header.next;
+            storage.readBlock(aBlock, number);
+            MetaBlock.map[number] = 'F';
           }
+          schemasIndex = schemasIndex_copy;
+          break;
+        }
       }
+    }
   }
-  storage.save(MetaBlock,0);
+  storage.save(MetaBlock, 0);
   ValueType aKey;
   aKey.value = theSchema.getName();
-  if(!schemasIndex.contains(aKey))
-      schemasIndex.addKeyValue(aKey,aFreeBlockNumber);
-  else{
-      schemasIndex.removeKeyValue(aKey);
-      schemasIndex.addKeyValue(aKey,aFreeBlockNumber);
+  if (!schemasIndex.contains(aKey))
+    schemasIndex.addKeyValue(aKey, aFreeBlockNumber);
+  else {
+    schemasIndex.removeKeyValue(aKey);
+    schemasIndex.addKeyValue(aKey, aFreeBlockNumber);
   }
-  uint32_t anotherFreeBlockNumber = storage.findFreeBlockNum(schemasIndex).value;
+  uint32_t anotherFreeBlockNumber =
+      storage.findFreeBlockNum(schemasIndex).value;
   schemasIndex.setBlockNum(anotherFreeBlockNumber);
-  storage.save(schemasIndex,anotherFreeBlockNumber);
+  storage.save(schemasIndex, anotherFreeBlockNumber);
 
   // create primary key indexes and store
-  Index primarykeyIndexes(theSchema.getPrimaryKeyName(),string_hash(theSchema.getPrimaryKeyName()),DataType::int_type);
+  Index primarykeyIndexes(theSchema.getPrimaryKeyName(),
+                          string_hash(theSchema.getPrimaryKeyName()),
+                          DataType::int_type);
   uint32_t freeBlockNumber = storage.findFreeBlockNum(primarykeyIndexes).value;
   primarykeyIndexes.setBlockNum(freeBlockNumber);
-  storage.save(primarykeyIndexes,freeBlockNumber);
+  storage.save(primarykeyIndexes, freeBlockNumber);
 
   // update indexes of index
-    Index indexesIndex;
-    storage.load(MetaBlock,0);
-    for(auto element:MetaBlock.map){
-        Index indexesIndex_copy;
-        if(element.second=='I'){
-            //startblock = element.first;
-            StorageBlock aBlock;
-            storage.readBlock(aBlock,element.first);
-            if(aBlock.header.pos==0){
-                storage.load(indexesIndex_copy,element.first);
-                if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                    MetaBlock.map[element.first] = 'F';
-                    while (aBlock.header.next) {
-                        uint32_t number = aBlock.header.next;
-                        storage.readBlock(aBlock, number);
-                        MetaBlock.map[number] = 'F';
-                    }
-                    indexesIndex = indexesIndex_copy;
-                    break;
-                }
-            }
+  Index indexesIndex;
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index indexesIndex_copy;
+    if (element.second == 'I') {
+      // startblock = element.first;
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(indexesIndex_copy, element.first);
+        if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+          MetaBlock.map[element.first] = 'F';
+          while (aBlock.header.next) {
+            uint32_t number = aBlock.header.next;
+            storage.readBlock(aBlock, number);
+            MetaBlock.map[number] = 'F';
+          }
+          indexesIndex = indexesIndex_copy;
+          break;
         }
+      }
     }
-    storage.save(MetaBlock,0);
-    ValueType anotherKey;
-    anotherKey.value = theSchema.getName();
-    if(!indexesIndex.contains(anotherKey))
-        indexesIndex.addKeyValue(anotherKey,freeBlockNumber);
-    else{
-        indexesIndex.removeKeyValue(anotherKey);
-        indexesIndex.addKeyValue(anotherKey,freeBlockNumber);
-    }
-    uint32_t freeBlockNumber_1 = storage.findFreeBlockNum(indexesIndex).value;
-    indexesIndex.setBlockNum(freeBlockNumber_1);
-    storage.save(indexesIndex,freeBlockNumber_1);
+  }
+  storage.save(MetaBlock, 0);
+  ValueType anotherKey;
+  anotherKey.value = theSchema.getName();
+  if (!indexesIndex.contains(anotherKey))
+    indexesIndex.addKeyValue(anotherKey, freeBlockNumber);
+  else {
+    indexesIndex.removeKeyValue(anotherKey);
+    indexesIndex.addKeyValue(anotherKey, freeBlockNumber);
+  }
+  uint32_t freeBlockNumber_1 = storage.findFreeBlockNum(indexesIndex).value;
+  indexesIndex.setBlockNum(freeBlockNumber_1);
+  storage.save(indexesIndex, freeBlockNumber_1);
   return StatusResult(noError);
 }
 
 StatusResult Database::dropTable(const std::string &aName) {
-    bool find = false;
+  bool find = false;
   storage.load(MetaBlock, 0);
   // Iterate all Blocks and take out tableName
   Schema aSchema;
@@ -248,103 +253,103 @@ StatusResult Database::dropTable(const std::string &aName) {
   }
 
   // find primaryKey Index Block
-    ValueType target;
-    target.value = aName;
-    uint32_t Keynum;
-    Index indexesIndex;
-    storage.load(MetaBlock,0);
-    for(auto element:MetaBlock.map){
-        Index indexesIndex_copy;
-        if(element.second=='I'){
-            //startblock = element.first;
-            StorageBlock aBlock;
-            storage.readBlock(aBlock,element.first);
-            if(aBlock.header.pos==0){
-                storage.load(indexesIndex_copy,element.first);
-                if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                    Keynum = indexesIndex_copy.getValue(target);
-                    break;
-                }
-            }
+  ValueType target;
+  target.value = aName;
+  uint32_t Keynum;
+  Index indexesIndex;
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index indexesIndex_copy;
+    if (element.second == 'I') {
+      // startblock = element.first;
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(indexesIndex_copy, element.first);
+        if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+          Keynum = indexesIndex_copy.getValue(target);
+          break;
         }
+      }
     }
-    // delete primarykey index
-    StorageBlock primaryBlock;
-    storage.readBlock(primaryBlock,Keynum);
-    MetaBlock.map[Keynum]='F';
-    while (primaryBlock.header.next ) {
-        uint32_t number = primaryBlock.header.next;
-        storage.readBlock(primaryBlock, number);
-        MetaBlock.map[number] = 'F';
-    }
-    storage.save(MetaBlock,0);
+  }
+  // delete primarykey index
+  StorageBlock primaryBlock;
+  storage.readBlock(primaryBlock, Keynum);
+  MetaBlock.map[Keynum] = 'F';
+  while (primaryBlock.header.next) {
+    uint32_t number = primaryBlock.header.next;
+    storage.readBlock(primaryBlock, number);
+    MetaBlock.map[number] = 'F';
+  }
+  storage.save(MetaBlock, 0);
 
-
-    // update indexs of Index
-    storage.load(MetaBlock,0);
-    for(auto element:MetaBlock.map){
-        Index indexesIndex_copy;
-        if(element.second=='I'){
-            StorageBlock aBlock;
-            storage.readBlock(aBlock,element.first);
-            if(aBlock.header.pos==0){
-                storage.load(indexesIndex_copy,element.first);
-                if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                    MetaBlock.map[element.first] = 'F';
-                    while (aBlock.header.next) {
-                        uint32_t number = aBlock.header.next;
-                        storage.readBlock(aBlock, number);
-                        MetaBlock.map[number] = 'F';
-                    }
-                    indexesIndex = indexesIndex_copy;
-                    break;
-                }
-            }
+  // update indexs of Index
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index indexesIndex_copy;
+    if (element.second == 'I') {
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(indexesIndex_copy, element.first);
+        if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+          MetaBlock.map[element.first] = 'F';
+          while (aBlock.header.next) {
+            uint32_t number = aBlock.header.next;
+            storage.readBlock(aBlock, number);
+            MetaBlock.map[number] = 'F';
+          }
+          indexesIndex = indexesIndex_copy;
+          break;
         }
+      }
     }
-    storage.save(MetaBlock,0);
-    ValueType anotherKey;
-    anotherKey.value = aName;
-    if(indexesIndex.contains(anotherKey)){
-        indexesIndex.removeKeyValue(anotherKey);
-    }
-    uint32_t freeBlockNumber_1 = storage.findFreeBlockNum(indexesIndex).value;
-    indexesIndex.setBlockNum(freeBlockNumber_1);
-    storage.save(indexesIndex,freeBlockNumber_1);
+  }
+  storage.save(MetaBlock, 0);
+  ValueType anotherKey;
+  anotherKey.value = aName;
+  if (indexesIndex.contains(anotherKey)) {
+    indexesIndex.removeKeyValue(anotherKey);
+  }
+  uint32_t freeBlockNumber_1 = storage.findFreeBlockNum(indexesIndex).value;
+  indexesIndex.setBlockNum(freeBlockNumber_1);
+  storage.save(indexesIndex, freeBlockNumber_1);
 
-    // update schemas Index
-    Index schemasIndex;
-    storage.load(MetaBlock,0);
-    for(auto element:MetaBlock.map){
-        Index schemasIndex_copy;
-        if(element.second=='I'){
-            //startblock = element.first;
-            StorageBlock aBlock;
-            storage.readBlock(aBlock,element.first);
-            if(aBlock.header.pos==0){
-                storage.load(schemasIndex_copy,element.first);
-                if(schemasIndex_copy.getFieldName()==std::string("SchemasIndex")){
-                    MetaBlock.map[element.first] = 'F';
-                    while (aBlock.header.next) {
-                        uint32_t number = aBlock.header.next;
-                        storage.readBlock(aBlock, number);
-                        MetaBlock.map[number] = 'F';
-                    }
-                    schemasIndex = schemasIndex_copy;
-                    break;
-                }
-            }
+  // update schemas Index
+  Index schemasIndex;
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index schemasIndex_copy;
+    if (element.second == 'I') {
+      // startblock = element.first;
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(schemasIndex_copy, element.first);
+        if (schemasIndex_copy.getFieldName() == std::string("SchemasIndex")) {
+          MetaBlock.map[element.first] = 'F';
+          while (aBlock.header.next) {
+            uint32_t number = aBlock.header.next;
+            storage.readBlock(aBlock, number);
+            MetaBlock.map[number] = 'F';
+          }
+          schemasIndex = schemasIndex_copy;
+          break;
         }
+      }
     }
-    storage.save(MetaBlock,0);
-    ValueType aKey;
-    aKey.value = aName;
-    if(schemasIndex.contains(aKey)){
-        schemasIndex.removeKeyValue(aKey);
-    }
-    uint32_t anotherFreeBlockNumber = storage.findFreeBlockNum(schemasIndex).value;
-    schemasIndex.setBlockNum(anotherFreeBlockNumber);
-    storage.save(schemasIndex,anotherFreeBlockNumber);
+  }
+  storage.save(MetaBlock, 0);
+  ValueType aKey;
+  aKey.value = aName;
+  if (schemasIndex.contains(aKey)) {
+    schemasIndex.removeKeyValue(aKey);
+  }
+  uint32_t anotherFreeBlockNumber =
+      storage.findFreeBlockNum(schemasIndex).value;
+  schemasIndex.setBlockNum(anotherFreeBlockNumber);
+  storage.save(schemasIndex, anotherFreeBlockNumber);
 
   if (!find)
     return StatusResult(unknownTable);
@@ -474,7 +479,7 @@ StatusResult Database::showTables() {
 StatusResult
 Database::insertRow(Schema *schemaPtr,
                     std::vector<std::map<std::string, ValueType>> vec) {
-   //extract data from vec, and put them into Rowcollection
+  // extract data from vec, and put them into Rowcollection
   std::vector<Row> rowCollection;
   std::string tableName = schemaPtr->getName();
   AttributeList attributes = schemaPtr->getAttributes();
@@ -504,92 +509,93 @@ Database::insertRow(Schema *schemaPtr,
 
   // call function findFreeBlockNum() to find freeblock and save each row in
   // database
-  storage.load(MetaBlock,0);
-  std::map<uint32_t,ValueType> keyBlockMap;
+  storage.load(MetaBlock, 0);
+  std::map<uint32_t, ValueType> keyBlockMap;
   for (auto aRow : rowCollection) {
     uint32_t aFreeBlockNumber = storage.findFreeBlockNum(aRow, MetaBlock).value;
-    keyBlockMap[aFreeBlockNumber]=aRow.data_map[schemaPtr->getPrimaryKeyName()];
+    keyBlockMap[aFreeBlockNumber] =
+        aRow.data_map[schemaPtr->getPrimaryKeyName()];
     storage.save(aRow, aFreeBlockNumber);
   }
   storage.save(MetaBlock, 0);
-  
- //find primaryKeyIndex block
+
+  // find primaryKeyIndex block
   ValueType target;
   target.value = schemaPtr->getName();
   uint32_t Keynum;
   Index indexesIndex;
-  storage.load(MetaBlock,0);
-  for(auto element:MetaBlock.map){
-      Index indexesIndex_copy;
-      if(element.second=='I'){
-          StorageBlock aBlock;
-          storage.readBlock(aBlock,element.first);
-          if(aBlock.header.pos==0){
-              storage.load(indexesIndex_copy,element.first);
-              if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                    Keynum = indexesIndex_copy.getValue(target);
-                    break;
-              }
-          }
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index indexesIndex_copy;
+    if (element.second == 'I') {
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(indexesIndex_copy, element.first);
+        if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+          Keynum = indexesIndex_copy.getValue(target);
+          break;
+        }
       }
+    }
   }
-  //update primaryKey index;
+  // update primaryKey index;
   Index primaryKeyIndex;
-  storage.load(primaryKeyIndex,Keynum);
-  MetaBlock.map[Keynum]='F';
+  storage.load(primaryKeyIndex, Keynum);
+  MetaBlock.map[Keynum] = 'F';
   StorageBlock aBlock_1;
-  storage.readBlock(aBlock_1,Keynum);
-  while(aBlock_1.header.next){
-      uint32_t number = aBlock_1.header.next;
-      storage.readBlock(aBlock_1, number);
-      MetaBlock.map[number] = 'F';
+  storage.readBlock(aBlock_1, Keynum);
+  while (aBlock_1.header.next) {
+    uint32_t number = aBlock_1.header.next;
+    storage.readBlock(aBlock_1, number);
+    MetaBlock.map[number] = 'F';
   }
-  storage.save(MetaBlock,0);
-  for(auto element:keyBlockMap){
-      if(!primaryKeyIndex.contains(element.second))
-        primaryKeyIndex.addKeyValue(element.second,element.first);
-      else{
-           primaryKeyIndex.removeKeyValue(element.second);
-           primaryKeyIndex.addKeyValue(element.second,element.first);
-      }
+  storage.save(MetaBlock, 0);
+  for (auto element : keyBlockMap) {
+    if (!primaryKeyIndex.contains(element.second))
+      primaryKeyIndex.addKeyValue(element.second, element.first);
+    else {
+      primaryKeyIndex.removeKeyValue(element.second);
+      primaryKeyIndex.addKeyValue(element.second, element.first);
+    }
   }
   uint32_t freeBlockNumber_1 = storage.findFreeBlockNum(primaryKeyIndex).value;
   indexesIndex.setBlockNum(freeBlockNumber_1);
-  storage.save(primaryKeyIndex,freeBlockNumber_1);
+  storage.save(primaryKeyIndex, freeBlockNumber_1);
   // update indexesIndex Block
-  storage.load(MetaBlock,0);
-  for(auto element:MetaBlock.map){
-      Index indexesIndex_copy;
-      if(element.second=='I'){
-          StorageBlock aBlock;
-          storage.readBlock(aBlock,element.first);
-          if(aBlock.header.pos==0){
-              storage.load(indexesIndex_copy,element.first);
-              if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                  MetaBlock.map[element.first] = 'F';
-                  while (aBlock.header.next) {
-                      uint32_t number = aBlock.header.next;
-                      storage.readBlock(aBlock, number);
-                      MetaBlock.map[number] = 'F';
-                  }
-                  indexesIndex = indexesIndex_copy;
-                  break;
-              }
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index indexesIndex_copy;
+    if (element.second == 'I') {
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(indexesIndex_copy, element.first);
+        if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+          MetaBlock.map[element.first] = 'F';
+          while (aBlock.header.next) {
+            uint32_t number = aBlock.header.next;
+            storage.readBlock(aBlock, number);
+            MetaBlock.map[number] = 'F';
           }
+          indexesIndex = indexesIndex_copy;
+          break;
+        }
       }
+    }
   }
-  storage.save(MetaBlock,0);
+  storage.save(MetaBlock, 0);
   ValueType anotherKey;
   anotherKey.value = schemaPtr->getName();
-  if(!indexesIndex.contains(anotherKey))
-      indexesIndex.addKeyValue(anotherKey,freeBlockNumber_1);
-  else{
-      indexesIndex.removeKeyValue(anotherKey);
-      indexesIndex.addKeyValue(anotherKey,freeBlockNumber_1);
+  if (!indexesIndex.contains(anotherKey))
+    indexesIndex.addKeyValue(anotherKey, freeBlockNumber_1);
+  else {
+    indexesIndex.removeKeyValue(anotherKey);
+    indexesIndex.addKeyValue(anotherKey, freeBlockNumber_1);
   }
   uint32_t freeBlockNumber_2 = storage.findFreeBlockNum(indexesIndex).value;
   indexesIndex.setBlockNum(freeBlockNumber_2);
-  storage.save(indexesIndex,freeBlockNumber_2);
+  storage.save(indexesIndex, freeBlockNumber_2);
   return StatusResult(noError);
 }
 
@@ -620,79 +626,79 @@ StatusResult Database::deleteFrom(std::string aName) {
   }
 
   // find primaryKey Index
-    ValueType target_1;
-    target_1.value = aName;
-    uint32_t Keynum;
-    Index indexesIndex;
-    storage.load(MetaBlock,0);
-    for(auto element:MetaBlock.map){
-        Index indexesIndex_copy;
-        if(element.second=='I'){
-            StorageBlock aBlock;
-            storage.readBlock(aBlock,element.first);
-            if(aBlock.header.pos==0){
-                storage.load(indexesIndex_copy,element.first);
-                if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                    Keynum = indexesIndex_copy.getValue(target_1);
-                    break;
-                }
-            }
+  ValueType target_1;
+  target_1.value = aName;
+  uint32_t Keynum;
+  Index indexesIndex;
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index indexesIndex_copy;
+    if (element.second == 'I') {
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(indexesIndex_copy, element.first);
+        if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+          Keynum = indexesIndex_copy.getValue(target_1);
+          break;
         }
+      }
     }
+  }
 
-  //update (clear) primaryKey Index
-    Index primaryKeyIndex;
-    storage.load(primaryKeyIndex,Keynum);
-    MetaBlock.map[Keynum]='F';
-    StorageBlock aBlock_1;
-    storage.readBlock(aBlock_1,Keynum);
-    while(aBlock_1.header.next){
-        uint32_t number = aBlock_1.header.next;
-        storage.readBlock(aBlock_1, number);
-        MetaBlock.map[number] = 'F';
-    }
-    storage.save(MetaBlock,0);
-    primaryKeyIndex.clearList();
-    uint32_t freeBlockNumber_1 = storage.findFreeBlockNum(primaryKeyIndex).value;
-    indexesIndex.setBlockNum(freeBlockNumber_1);
-    storage.save(primaryKeyIndex,freeBlockNumber_1);
+  // update (clear) primaryKey Index
+  Index primaryKeyIndex;
+  storage.load(primaryKeyIndex, Keynum);
+  MetaBlock.map[Keynum] = 'F';
+  StorageBlock aBlock_1;
+  storage.readBlock(aBlock_1, Keynum);
+  while (aBlock_1.header.next) {
+    uint32_t number = aBlock_1.header.next;
+    storage.readBlock(aBlock_1, number);
+    MetaBlock.map[number] = 'F';
+  }
+  storage.save(MetaBlock, 0);
+  primaryKeyIndex.clearList();
+  uint32_t freeBlockNumber_1 = storage.findFreeBlockNum(primaryKeyIndex).value;
+  indexesIndex.setBlockNum(freeBlockNumber_1);
+  storage.save(primaryKeyIndex, freeBlockNumber_1);
 
-    //update indexes of Index
-    storage.load(MetaBlock,0);
-    for(auto element:MetaBlock.map){
-        Index indexesIndex_copy;
-        if(element.second=='I'){
-            StorageBlock aBlock;
-            storage.readBlock(aBlock,element.first);
-            if(aBlock.header.pos==0){
-                storage.load(indexesIndex_copy,element.first);
-                if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                    MetaBlock.map[element.first] = 'F';
-                    while (aBlock.header.next) {
-                        uint32_t number = aBlock.header.next;
-                        storage.readBlock(aBlock, number);
-                        MetaBlock.map[number] = 'F';
-                    }
-                    indexesIndex = indexesIndex_copy;
-                    break;
-                }
-            }
+  // update indexes of Index
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index indexesIndex_copy;
+    if (element.second == 'I') {
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(indexesIndex_copy, element.first);
+        if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+          MetaBlock.map[element.first] = 'F';
+          while (aBlock.header.next) {
+            uint32_t number = aBlock.header.next;
+            storage.readBlock(aBlock, number);
+            MetaBlock.map[number] = 'F';
+          }
+          indexesIndex = indexesIndex_copy;
+          break;
         }
+      }
     }
-    storage.save(MetaBlock,0);
-    ValueType anotherKey;
-    anotherKey.value = aName;
-    if(!indexesIndex.contains(anotherKey))
-        indexesIndex.addKeyValue(anotherKey,freeBlockNumber_1);
-    else{
-        indexesIndex.removeKeyValue(anotherKey);
-        indexesIndex.addKeyValue(anotherKey,freeBlockNumber_1);
-    }
-    uint32_t freeBlockNumber_2 = storage.findFreeBlockNum(indexesIndex).value;
-    indexesIndex.setBlockNum(freeBlockNumber_2);
-    storage.save(indexesIndex,freeBlockNumber_2);
+  }
+  storage.save(MetaBlock, 0);
+  ValueType anotherKey;
+  anotherKey.value = aName;
+  if (!indexesIndex.contains(anotherKey))
+    indexesIndex.addKeyValue(anotherKey, freeBlockNumber_1);
+  else {
+    indexesIndex.removeKeyValue(anotherKey);
+    indexesIndex.addKeyValue(anotherKey, freeBlockNumber_1);
+  }
+  uint32_t freeBlockNumber_2 = storage.findFreeBlockNum(indexesIndex).value;
+  indexesIndex.setBlockNum(freeBlockNumber_2);
+  storage.save(indexesIndex, freeBlockNumber_2);
 
-    if (!find) {
+  if (!find) {
     return StatusResult(unknownTable);
   } else {
     std::cout << affectedNumber << " rows affected ";
@@ -703,13 +709,13 @@ StatusResult Database::deleteFrom(std::string aName) {
 StatusResult Database::selectFrom(Schema *schemaPtr,
                                   std::vector<std::string> fieldList,
                                   int limitNum, std::string orderBy,
-                                  Expressions expressionList) {
-  
+                                  Expressions expressionList,
+                                  std::vector<Join> joins) {
   std::string tableName = schemaPtr->getName();
   storage.load(MetaBlock, 0);
   Filters aFilter;
   AttributeList attributes = schemaPtr->getAttributes();
-  //deal with "select *"
+  // deal with "select *"
   if (fieldList[0] == "*") {
     for (int i = 0; i < attributes.size(); i++) {
       if (i < fieldList.size())
@@ -718,79 +724,123 @@ StatusResult Database::selectFrom(Schema *schemaPtr,
         fieldList.push_back(attributes[i].getName());
     }
   }
+
   // build filter
-  // bool match = false;
-  // if (expressionList.size()) {
   bool isPrimaryKey_filter = true;
   for (auto expression : expressionList) {
-      if(expression->lhs.name!=schemaPtr->getPrimaryKeyName()){
-          isPrimaryKey_filter = false;
-      }
-      aFilter.add(expression);
+    if (expression->lhs.name != schemaPtr->getPrimaryKeyName()) {
+      isPrimaryKey_filter = false;
+    }
+    aFilter.add(expression);
   }
-  // } else {
-  //   match = true;
-  // }
+
   //-------------where------------------------
-  if(isPrimaryKey_filter){
-      // find primary Key Index
-      ValueType target_1;
-      target_1.value = schemaPtr->getName();
-      uint32_t Keynum;
-      Index indexesIndex;
-      storage.load(MetaBlock,0);
-      for(auto element:MetaBlock.map){
-          Index indexesIndex_copy;
-          if(element.second=='I'){
-              StorageBlock aBlock;
-              storage.readBlock(aBlock,element.first);
-              if(aBlock.header.pos==0){
-                  storage.load(indexesIndex_copy,element.first);
-                  if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                      Keynum = indexesIndex_copy.getValue(target_1);
-                      break;
-                  }
-              }
+  if (isPrimaryKey_filter && expressionList.size()>0) {
+    // find primary Key Index
+    ValueType target_1;
+    target_1.value = schemaPtr->getName();
+    uint32_t Keynum;
+    Index indexesIndex;
+    storage.load(MetaBlock, 0);
+    for (auto element : MetaBlock.map) {
+      Index indexesIndex_copy;
+      if (element.second == 'I') {
+        StorageBlock aBlock;
+        storage.readBlock(aBlock, element.first);
+        if (aBlock.header.pos == 0) {
+          storage.load(indexesIndex_copy, element.first);
+          if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+            Keynum = indexesIndex_copy.getValue(target_1);
+            break;
           }
+        }
       }
-      Index primaryKeyIndex;
-      storage.load(primaryKeyIndex,Keynum);
-      std::vector<uint32_t> rowsNum;
-      for(auto element:primaryKeyIndex.list){
-          std::map<std::string, ValueType> aList;
-          aList[schemaPtr->getPrimaryKeyName()]=element.first;
-          if(aFilter.matches(aList)){
-              rowsNum.push_back(element.second);
-          }
+    }
+    Index primaryKeyIndex;
+    storage.load(primaryKeyIndex, Keynum);
+    std::vector<uint32_t> rowsNum;
+    for (auto element : primaryKeyIndex.list) {
+      std::map<std::string, ValueType> aList;
+      aList[schemaPtr->getPrimaryKeyName()] = element.first;
+      if (aFilter.matches(aList)) {
+        rowsNum.push_back(element.second);
       }
-      // push back rows in rowCollection
-      storage.rowCollection.clear();
-      for(auto element : rowsNum){
-          Row aRow;
-          storage.load(aRow,element);
-          storage.rowCollection.push_back(aRow);
-      }
+    }
+    // push back rows in rowCollection
+    storage.rowCollection.clear();
+    for (auto element : rowsNum) {
+      Row aRow;
+      storage.load(aRow, element);
+      storage.rowCollection.push_back(aRow);
+    }
+  } else {
+    storage.rowCollection.clear();
+    BlockVisitor aVisitor(tableName, aFilter);
+    storage.each(aVisitor);
   }
-  else{
-      storage.rowCollection.clear();
-      BlockVisitor aVisitor(tableName, aFilter);
-      storage.each(aVisitor);
-  }
-
-
 
   //-----------------order by-------------------------------
 
   if (orderBy != "NULL") {
     RowSorters theSorter(orderBy);
-    std::sort(storage.rowCollection.begin(), storage.rowCollection.end(), theSorter);
+    std::sort(storage.rowCollection.begin(), storage.rowCollection.end(),
+              theSorter);
   }
 
   //-------------------Limit-------------------------------
   if (limitNum != -1 && limitNum < storage.rowCollection.size()) {
-    storage.rowCollection.erase(storage.rowCollection.begin() + limitNum, storage.rowCollection.end());
+    storage.rowCollection.erase(storage.rowCollection.begin() + limitNum,
+                                storage.rowCollection.end());
   }
 
+  //-------------------Join--------------------------------
+  std::vector<Row> jResultCollection;
+  if (joins.size() > 0) { // TODO: consider multiple joins
+    for (Join theJoin : joins) {
+      std::string jTableName = theJoin.tableName;
+      Index schemaIndex;
+      Index indexIndex;
+      // load schema indexes
+      bool isSchemaIndex = true;
+      for (auto element : MetaBlock.map) {
+        if (element.second == 'I') {
+          if (isSchemaIndex) {
+            storage.load(schemaIndex, element.first);
+            isSchemaIndex = false;
+          } else {
+            storage.load(indexIndex, element.first);
+            break;
+          }
+        }
+      }
+      ValueType tableNameVT;
+      tableNameVT.value = jTableName;
+      int jTableBlockNum = schemaIndex.list[tableNameVT];
+      int jIndexBlockNum = indexIndex.list[tableNameVT];
+      Schema jSchema;
+      Index jIndex;
+      storage.load(jSchema, jTableBlockNum);
+      storage.load(jIndex, jIndexBlockNum);
+      // get another join row collection
+      std::vector<Row> jRowCollection;
+      for (auto element : jIndex.list) {
+        Row aRow;
+        storage.load(aRow, element.second);
+        jRowCollection.push_back(aRow);
+      }
+      theJoin.onLeft.parse();
+      theJoin.onRight.parse();
+      theJoin.swaplr();
+      if (theJoin.joinType == Keywords::left_kw) {
+        jResultCollection =
+            leftJoin(storage.rowCollection, jRowCollection, theJoin);
+      } else {
+        jResultCollection =
+            rightJoin(storage.rowCollection, jRowCollection, theJoin);
+      }
+    }
+  }
+  
   int length = fieldList.size();
   std::string splitLine;
   std::string unit = "+-----------------------------";
@@ -805,260 +855,328 @@ StatusResult Database::selectFrom(Schema *schemaPtr,
   std::cout << splitLine << std::endl;
   std::cout << header.str() << std::endl;
   std::cout << splitLine << std::endl;
-  if (storage.rowCollection.size()) {
-    for (auto aRow : storage.rowCollection) {
+  if (jResultCollection.size()) {
+    for (auto aRow : jResultCollection) {
       std::stringstream content;
       content.clear();
       for (auto key : fieldList) {
         if (aRow.data_map[key].getString() == std::nullopt ||
-            aRow.data_map[key].getString() != "NULL")
+            aRow.data_map[key].getString() != "NULL") {
           content << "| " << std::left << std::setw(28) << aRow.data_map[key];
-        else
+        }
+        else if (joins.size()>0) {
+          content << "| NULL                        ";
+        } else {
           content << "|                             ";
+        }
       }
       content << "|";
       std::cout << content.str() << std::endl;
     }
   }
   std::cout << splitLine << std::endl;
-  std::cout << storage.rowCollection.size() << " rows in set" << " ";
+  std::cout << jResultCollection.size() << " rows in set"
+            << " ";
   return StatusResult();
+}
+
+std::vector<Row> Database::leftJoin(std::vector<Row> &lrc, std::vector<Row> &rrc,
+                                Join &theJoin) {
+  std::string leftField = theJoin.onLeft.fieldName;
+  std::string rightField = theJoin.onRight.fieldName;
+  std::vector<Row> resultRC;
+  for (Row mainRow:lrc) {
+    int appendNumber = 0;
+    for (Row appendRow:rrc) {
+      Row aRow = mainRow;
+      if (appendRow.data_map[rightField] == mainRow.data_map[leftField]) {
+        for (auto element:appendRow.data_map) {
+          aRow.data_map[element.first] = element.second;
+        }
+        appendNumber++;
+        resultRC.push_back(aRow);
+      }
+    }
+    if (appendNumber == 0) {
+      Row aRow = mainRow;
+      Row appendRow = rrc[0];
+      for (auto element:appendRow.data_map) {
+        if (aRow.data_map.count(element.first) == 0) {
+          ValueType valueType;
+          valueType.value = std::string("NULL");
+          aRow.data_map[element.first] = valueType;
+        }
+      }
+      resultRC.push_back(aRow);
+    }
+  }
+  return resultRC;
+}
+
+std::vector<Row> Database::rightJoin(std::vector<Row> &lrc, std::vector<Row> &rrc,
+                                 Join &theJoin) {
+  std::string leftField = theJoin.onLeft.fieldName;
+  std::string rightField = theJoin.onRight.fieldName;
+  std::vector<Row> resultRC;
+  for (Row mainRow:rrc) {
+    int appendNumber = 0;
+    for (Row appendRow:lrc) {
+      Row aRow = mainRow;
+      if (appendRow.data_map[leftField] == mainRow.data_map[rightField]) {
+        for (auto element:appendRow.data_map) {
+          aRow.data_map[element.first] = element.second;
+        }
+        appendNumber++;
+        resultRC.push_back(aRow);
+      }
+    }
+    if (appendNumber == 0) {
+      Row aRow = mainRow;
+      Row appendRow = rrc[0];
+      for (auto element:appendRow.data_map) {
+        if (aRow.data_map.count(element.first) == 0) {
+          ValueType valueType;
+          valueType.value = std::string("NULL");
+          aRow.data_map[element.first] = valueType;
+        }
+      }
+      resultRC.push_back(aRow);
+    }
+  }
+  return resultRC;
 }
 
 StatusResult Database::updateRecords(Schema *schemaPtr, Expression *setExpr,
                                      Expressions whereExprs, Operators op) {
-      std::vector<Row> rowCollection;
-    std::string tableName = schemaPtr->getName();
-    storage.load(MetaBlock, 0);
-    if(op==Operators::unknown_op){
-        Filters aFilter;
-        for (auto expression : whereExprs)
-            aFilter.add(expression);
-        for (auto element : MetaBlock.map) {
-            if (element.second == 'D') {
-                StorageBlock aBlock;
-                storage.readBlock(aBlock, element.first);
-                if (aBlock.header.pos == 0) {
-                    Row aRow;
-                    storage.load(aRow, element.first);
-                    if (aRow.getName() == tableName) {
-                        if (aFilter.matches(aRow.data_map)){
-                            rowCollection.push_back(aRow);
-                            MetaBlock.map[element.first] = 'F';
-                            while (aBlock.header.next) {
-                                uint32_t number = aBlock.header.next;
-                                storage.readBlock(aBlock, number);
-                                MetaBlock.map[number] = 'F';
-                            }
-                        }
-                    }
-                }
+  std::vector<Row> rowCollection;
+  std::string tableName = schemaPtr->getName();
+  storage.load(MetaBlock, 0);
+  if (op == Operators::unknown_op) {
+    Filters aFilter;
+    for (auto expression : whereExprs)
+      aFilter.add(expression);
+    for (auto element : MetaBlock.map) {
+      if (element.second == 'D') {
+        StorageBlock aBlock;
+        storage.readBlock(aBlock, element.first);
+        if (aBlock.header.pos == 0) {
+          Row aRow;
+          storage.load(aRow, element.first);
+          if (aRow.getName() == tableName) {
+            if (aFilter.matches(aRow.data_map)) {
+              rowCollection.push_back(aRow);
+              MetaBlock.map[element.first] = 'F';
+              while (aBlock.header.next) {
+                uint32_t number = aBlock.header.next;
+                storage.readBlock(aBlock, number);
+                MetaBlock.map[number] = 'F';
+              }
             }
+          }
         }
+      }
     }
-    else if(op==Operators::and_op){
-        Filters and_Filter;
-        for (auto expression : whereExprs)
-            and_Filter.add(expression);
-        for (auto element : MetaBlock.map) {
-            if (element.second == 'D') {
-                StorageBlock aBlock;
-                storage.readBlock(aBlock, element.first);
-                if (aBlock.header.pos == 0) {
-                    Row aRow;
-                    storage.load(aRow, element.first);
-                    if (aRow.getName() == tableName) {
-                        if (and_Filter.matches(aRow.data_map)){
-                            rowCollection.push_back(aRow);
-                            MetaBlock.map[element.first] = 'F';
-                            while (aBlock.header.next) {
-                                uint32_t number = aBlock.header.next;
-                                storage.readBlock(aBlock, number);
-                                MetaBlock.map[number] = 'F';
-                            }
-                        }
-                    }
-                }
+  } else if (op == Operators::and_op) {
+    Filters and_Filter;
+    for (auto expression : whereExprs)
+      and_Filter.add(expression);
+    for (auto element : MetaBlock.map) {
+      if (element.second == 'D') {
+        StorageBlock aBlock;
+        storage.readBlock(aBlock, element.first);
+        if (aBlock.header.pos == 0) {
+          Row aRow;
+          storage.load(aRow, element.first);
+          if (aRow.getName() == tableName) {
+            if (and_Filter.matches(aRow.data_map)) {
+              rowCollection.push_back(aRow);
+              MetaBlock.map[element.first] = 'F';
+              while (aBlock.header.next) {
+                uint32_t number = aBlock.header.next;
+                storage.readBlock(aBlock, number);
+                MetaBlock.map[number] = 'F';
+              }
             }
+          }
         }
+      }
     }
-    else  {    // op==Operators::or_op
-        Filters or_Filter_1,or_Filter_2;
-        or_Filter_1.add(whereExprs[0]);
-        or_Filter_2.add(whereExprs[1]);
-        for (auto element : MetaBlock.map) {
-            if (element.second == 'D') {
-                StorageBlock aBlock;
-                storage.readBlock(aBlock, element.first);
-                if (aBlock.header.pos == 0) {
-                    Row aRow;
-                    storage.load(aRow, element.first);
-                    if (aRow.getName() == tableName) {
-                        if (or_Filter_1.matches(aRow.data_map)||or_Filter_2.matches(aRow.data_map)){
-                            rowCollection.push_back(aRow);
-                            MetaBlock.map[element.first] = 'F';
-                            while (aBlock.header.next) {
-                                uint32_t number = aBlock.header.next;
-                                storage.readBlock(aBlock, number);
-                                MetaBlock.map[number] = 'F';
-                            }
-                        }
-                    }
-                }
+  } else { // op==Operators::or_op
+    Filters or_Filter_1, or_Filter_2;
+    or_Filter_1.add(whereExprs[0]);
+    or_Filter_2.add(whereExprs[1]);
+    for (auto element : MetaBlock.map) {
+      if (element.second == 'D') {
+        StorageBlock aBlock;
+        storage.readBlock(aBlock, element.first);
+        if (aBlock.header.pos == 0) {
+          Row aRow;
+          storage.load(aRow, element.first);
+          if (aRow.getName() == tableName) {
+            if (or_Filter_1.matches(aRow.data_map) ||
+                or_Filter_2.matches(aRow.data_map)) {
+              rowCollection.push_back(aRow);
+              MetaBlock.map[element.first] = 'F';
+              while (aBlock.header.next) {
+                uint32_t number = aBlock.header.next;
+                storage.readBlock(aBlock, number);
+                MetaBlock.map[number] = 'F';
+              }
             }
+          }
         }
+      }
     }
-    storage.save(MetaBlock,0);
+  }
+  storage.save(MetaBlock, 0);
 
-    // change data in selected rows
-    for(int i=0;i<rowCollection.size();++i)
-        rowCollection[i].data_map[setExpr->lhs.name]=setExpr->rhs.value;
+  // change data in selected rows
+  for (int i = 0; i < rowCollection.size(); ++i)
+    rowCollection[i].data_map[setExpr->lhs.name] = setExpr->rhs.value;
 
-    // write rows in database file
-    std::map<uint32_t,ValueType> newRowMessage;
-    for (auto aRow : rowCollection) {
-        uint32_t aFreeBlockNumber = storage.findFreeBlockNum(aRow).value;
-        storage.save(aRow, aFreeBlockNumber);
-        newRowMessage[aFreeBlockNumber]=aRow.data_map[schemaPtr->getPrimaryKeyName()];
-    }
+  // write rows in database file
+  std::map<uint32_t, ValueType> newRowMessage;
+  for (auto aRow : rowCollection) {
+    uint32_t aFreeBlockNumber = storage.findFreeBlockNum(aRow).value;
+    storage.save(aRow, aFreeBlockNumber);
+    newRowMessage[aFreeBlockNumber] =
+        aRow.data_map[schemaPtr->getPrimaryKeyName()];
+  }
 
-    //find primaryKey Indexes
-    ValueType target_1;
-    target_1.value = schemaPtr->getName();
-    uint32_t Keynum;
-    Index indexesIndex;
-    storage.load(MetaBlock,0);
-    for(auto element:MetaBlock.map){
-        Index indexesIndex_copy;
-        if(element.second=='I'){
-            StorageBlock aBlock;
-            storage.readBlock(aBlock,element.first);
-            if(aBlock.header.pos==0){
-                storage.load(indexesIndex_copy,element.first);
-                if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                    Keynum = indexesIndex_copy.getValue(target_1);
-                    break;
-                }
-            }
+  // find primaryKey Indexes
+  ValueType target_1;
+  target_1.value = schemaPtr->getName();
+  uint32_t Keynum;
+  Index indexesIndex;
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index indexesIndex_copy;
+    if (element.second == 'I') {
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(indexesIndex_copy, element.first);
+        if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+          Keynum = indexesIndex_copy.getValue(target_1);
+          break;
         }
+      }
     }
+  }
 
-    //update primary Key Index
-    Index primaryKeyIndex;
-    storage.load(primaryKeyIndex,Keynum);
-    MetaBlock.map[Keynum]='F';
-    StorageBlock aBlock_1;
-    storage.readBlock(aBlock_1,Keynum);
-    while(aBlock_1.header.next){
-        uint32_t number = aBlock_1.header.next;
-        storage.readBlock(aBlock_1, number);
-        MetaBlock.map[number] = 'F';
+  // update primary Key Index
+  Index primaryKeyIndex;
+  storage.load(primaryKeyIndex, Keynum);
+  MetaBlock.map[Keynum] = 'F';
+  StorageBlock aBlock_1;
+  storage.readBlock(aBlock_1, Keynum);
+  while (aBlock_1.header.next) {
+    uint32_t number = aBlock_1.header.next;
+    storage.readBlock(aBlock_1, number);
+    MetaBlock.map[number] = 'F';
+  }
+  storage.save(MetaBlock, 0);
+  for (auto element : newRowMessage) {
+    if (!primaryKeyIndex.contains(element.second))
+      primaryKeyIndex.addKeyValue(element.second, element.first);
+    else {
+      primaryKeyIndex.removeKeyValue(element.second);
+      primaryKeyIndex.addKeyValue(element.second, element.first);
     }
-    storage.save(MetaBlock,0);
-    for(auto element:newRowMessage){
-        if(!primaryKeyIndex.contains(element.second))
-            primaryKeyIndex.addKeyValue(element.second,element.first);
-        else{
-            primaryKeyIndex.removeKeyValue(element.second);
-            primaryKeyIndex.addKeyValue(element.second,element.first);
+  }
+  uint32_t freeBlockNumber_1 = storage.findFreeBlockNum(primaryKeyIndex).value;
+  indexesIndex.setBlockNum(freeBlockNumber_1);
+  storage.save(primaryKeyIndex, freeBlockNumber_1);
+
+  // update indexes Index
+  storage.load(MetaBlock, 0);
+  for (auto element : MetaBlock.map) {
+    Index indexesIndex_copy;
+    if (element.second == 'I') {
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(indexesIndex_copy, element.first);
+        if (indexesIndex_copy.getFieldName() == std::string("IndexesIndex")) {
+          MetaBlock.map[element.first] = 'F';
+          while (aBlock.header.next) {
+            uint32_t number = aBlock.header.next;
+            storage.readBlock(aBlock, number);
+            MetaBlock.map[number] = 'F';
+          }
+          indexesIndex = indexesIndex_copy;
+          break;
         }
+      }
     }
-    uint32_t freeBlockNumber_1 = storage.findFreeBlockNum(primaryKeyIndex).value;
-    indexesIndex.setBlockNum(freeBlockNumber_1);
-    storage.save(primaryKeyIndex,freeBlockNumber_1);
+  }
+  storage.save(MetaBlock, 0);
+  ValueType anotherKey;
+  anotherKey.value = schemaPtr->getName();
+  if (!indexesIndex.contains(anotherKey))
+    indexesIndex.addKeyValue(anotherKey, freeBlockNumber_1);
+  else {
+    indexesIndex.removeKeyValue(anotherKey);
+    indexesIndex.addKeyValue(anotherKey, freeBlockNumber_1);
+  }
+  uint32_t freeBlockNumber_2 = storage.findFreeBlockNum(indexesIndex).value;
+  indexesIndex.setBlockNum(freeBlockNumber_2);
+  storage.save(indexesIndex, freeBlockNumber_2);
 
-    //update indexes Index
-    storage.load(MetaBlock,0);
-    for(auto element:MetaBlock.map){
-        Index indexesIndex_copy;
-        if(element.second=='I'){
-            StorageBlock aBlock;
-            storage.readBlock(aBlock,element.first);
-            if(aBlock.header.pos==0){
-                storage.load(indexesIndex_copy,element.first);
-                if(indexesIndex_copy.getFieldName()==std::string("IndexesIndex")){
-                    MetaBlock.map[element.first] = 'F';
-                    while (aBlock.header.next) {
-                        uint32_t number = aBlock.header.next;
-                        storage.readBlock(aBlock, number);
-                        MetaBlock.map[number] = 'F';
-                    }
-                    indexesIndex = indexesIndex_copy;
-                    break;
-                }
-            }
-        }
-    }
-    storage.save(MetaBlock,0);
-    ValueType anotherKey;
-    anotherKey.value = schemaPtr->getName();
-    if(!indexesIndex.contains(anotherKey))
-        indexesIndex.addKeyValue(anotherKey,freeBlockNumber_1);
-    else{
-        indexesIndex.removeKeyValue(anotherKey);
-        indexesIndex.addKeyValue(anotherKey,freeBlockNumber_1);
-    }
-    uint32_t freeBlockNumber_2 = storage.findFreeBlockNum(indexesIndex).value;
-    indexesIndex.setBlockNum(freeBlockNumber_2);
-    storage.save(indexesIndex,freeBlockNumber_2);
-
-
-    std::cout << rowCollection.size() << " rows affected ";
-    return StatusResult(noError);
+  std::cout << rowCollection.size() << " rows affected ";
+  return StatusResult(noError);
 }
 
 StatusResult Database::showIndexes() {
 
-    std::cout<<"+-----------------+-----------------+"<<std::endl;
-    std::cout<<"| table           | field           |"<<std::endl;
-    std::cout<<"+-----------------+-----------------+"<<std::endl;
-    // schema Index
-//    std::cout<<"|                 ";
-//    std::cout<<"| "<<std::left<<std::setw(16)<<"SchemaIndex";
-//    std::cout<<"|"<<std::endl;
-//    std::cout<<"+-----------------+-----------------+"<<std::endl;
-//    // indexes Index
-//    std::cout<<"|                 ";
-//    std::cout<<"| "<<std::left<<std::setw(16)<<"IndexesIndex";
-//    std::cout<<"|"<<std::endl;
-//    std::cout<<"+-----------------+-----------------+"<<std::endl;
+  std::cout << "+-----------------+-----------------+" << std::endl;
+  std::cout << "| table           | field           |" << std::endl;
+  std::cout << "+-----------------+-----------------+" << std::endl;
+  // schema Index
+  //    std::cout<<"|                 ";
+  //    std::cout<<"| "<<std::left<<std::setw(16)<<"SchemaIndex";
+  //    std::cout<<"|"<<std::endl;
+  //    std::cout<<"+-----------------+-----------------+"<<std::endl;
+  //    // indexes Index
+  //    std::cout<<"|                 ";
+  //    std::cout<<"| "<<std::left<<std::setw(16)<<"IndexesIndex";
+  //    std::cout<<"|"<<std::endl;
+  //    std::cout<<"+-----------------+-----------------+"<<std::endl;
 
-    storage.load(MetaBlock,0);
-    // find schema Index
-    Index schemasIndex;
-    for(auto element:MetaBlock.map){
-        Index schemasIndex_copy;
-        if(element.second=='I'){
-            StorageBlock aBlock;
-            storage.readBlock(aBlock,element.first);
-            if(aBlock.header.pos==0){
-                storage.load(schemasIndex_copy,element.first);
-                if(schemasIndex_copy.getFieldName()==std::string("SchemasIndex")){
-                    schemasIndex = schemasIndex_copy;
-                    break;
-                }
-            }
+  storage.load(MetaBlock, 0);
+  // find schema Index
+  Index schemasIndex;
+  for (auto element : MetaBlock.map) {
+    Index schemasIndex_copy;
+    if (element.second == 'I') {
+      StorageBlock aBlock;
+      storage.readBlock(aBlock, element.first);
+      if (aBlock.header.pos == 0) {
+        storage.load(schemasIndex_copy, element.first);
+        if (schemasIndex_copy.getFieldName() == std::string("SchemasIndex")) {
+          schemasIndex = schemasIndex_copy;
+          break;
         }
+      }
     }
-    std::map<std::string,ValueType> indexMap;
+  }
+  std::map<std::string, ValueType> indexMap;
 
-    for(auto element : schemasIndex.list){
-        Schema aSchema;
-        storage.load(aSchema,element.second);
-        indexMap[aSchema.getPrimaryKeyName()]=element.first;
-    }
-    for(auto element : indexMap){
-        std::cout<<"| "<<std::left<<std::setw(16)<<element.second;
-        std::cout<<"| "<<std::left<<std::setw(16)<<element.first;
-        std::cout<<"|"<<std::endl;
-        std::cout<<"+-----------------+-----------------+"<<std::endl;
-    }
-    uint32_t rowNumber=indexMap.size();
-    std::cout<<rowNumber<<" rows in set"<<std::endl;
-
+  for (auto element : schemasIndex.list) {
+    Schema aSchema;
+    storage.load(aSchema, element.second);
+    indexMap[aSchema.getPrimaryKeyName()] = element.first;
+  }
+  for (auto element : indexMap) {
+    std::cout << "| " << std::left << std::setw(16) << element.second;
+    std::cout << "| " << std::left << std::setw(16) << element.first;
+    std::cout << "|" << std::endl;
+    std::cout << "+-----------------+-----------------+" << std::endl;
+  }
+  uint32_t rowNumber = indexMap.size();
+  std::cout << rowNumber << " rows in set" << std::endl;
 
   return StatusResult();
 }
 
 } // namespace ECE141
-

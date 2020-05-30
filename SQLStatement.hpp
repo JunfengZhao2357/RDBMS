@@ -611,10 +611,11 @@ public:
             StatusResult parseResult(noError);
             currPos = 0;
             while (aTokenizer.remaining() > currPos) {
-              StatusResult res1 = parseOrder(aTokenizer, currPos);
-              StatusResult res2 = parseLimit(aTokenizer, currPos);
-              StatusResult res3 = parseWhere(aTokenizer, currPos);
-              if (!res1 && !res2 && !res3)
+              StatusResult hasOrder = parseOrder(aTokenizer, currPos);
+              StatusResult hasLimit = parseLimit(aTokenizer, currPos);
+              StatusResult hasWhere = parseWhere(aTokenizer, currPos);
+              StatusResult hasJoin = parseJoin(aTokenizer, currPos);
+              if (!hasOrder && !hasLimit && !hasWhere && !hasJoin)
                 break;
             }
             aTokenizer.next(currPos);
@@ -715,6 +716,33 @@ public:
     return StatusResult(syntaxError);
   }
 
+  StatusResult parseJoin(Tokenizer &aTokenizer, int &pos) {
+    if (aTokenizer.remaining() >= pos + 11) {
+      Token currToken = aTokenizer.peek(pos);
+      joinType = currToken.keyword;
+      if (joinType == Keywords::left_kw || joinType == Keywords::right_kw) {
+        pos++;
+        if (aTokenizer.peek(pos++).keyword == Keywords::join_kw) {
+          joinTableName = aTokenizer.peek(pos++).data;
+          if (aTokenizer.peek(pos++).keyword == Keywords::on_kw) {
+            std::string lhs = aTokenizer.peek(pos++).data;
+            lhs += aTokenizer.peek(pos++).data;
+            lhs += aTokenizer.peek(pos++).data;
+            if (aTokenizer.peek(pos++).data != "=") {
+              return StatusResult(syntaxError);
+            }
+            std::string rhs = aTokenizer.peek(pos++).data;
+            rhs += aTokenizer.peek(pos++).data;
+            rhs += aTokenizer.peek(pos++).data;
+            Join theJoin(joinTableName, joinType, lhs, rhs);
+            joins.push_back(theJoin);
+          }
+        }
+      }
+    }
+    return StatusResult(syntaxError);
+  }
+
   StatusResult run(std::ostream &aStream, Database *&dbptr) const {
     // Select from
     // Check database exist
@@ -744,22 +772,24 @@ public:
 
     AttributeList attributes = schema->getAttributes();
     // Check FieldList and orderBy
-    bool allFieldsExist = true;
-    bool orderByExist = false;
-    for (auto field : fieldList) {
-      bool existField = false;
-      for (auto attr : attributes) {
-        if (attr.getName() == field || field == "*") {
-          existField = true;
+    if (joins.size() == 0) {
+      bool allFieldsExist = true;
+      bool orderByExist = false;
+      for (auto field : fieldList) {
+        bool existField = false;
+        for (auto attr : attributes) {
+          if (attr.getName() == field || field == "*") {
+            existField = true;
+          }
+          if (attr.getName() == orderBy || orderBy == "*") {
+            orderByExist = true;
+          }
         }
-        if (attr.getName() == orderBy || orderBy == "*") {
-          orderByExist = true;
-        }
+        allFieldsExist = allFieldsExist && existField;
       }
-      allFieldsExist = allFieldsExist && existField;
-    }
-    if (!allFieldsExist || (orderBy != "NULL" && !orderByExist)) {
-      return StatusResult(unknownAttribute);
+      if (!allFieldsExist || (orderBy != "NULL" && !orderByExist)) {
+        return StatusResult(unknownAttribute);
+      }
     }
     // Check expressionlist validation
     std::map<DataType, int> DataTypeToInt = {
@@ -809,9 +839,13 @@ public:
     if (!allExprValid) {
       return StatusResult(unknownAttribute);
     }
+
+    // check join
+    // TODO
+
     Timer timer;
     timer.start();
-    dbptr->selectFrom(schema, fieldList, limitNum, orderBy, expressionList);
+    dbptr->selectFrom(schema, fieldList, limitNum, orderBy, expressionList, joins);
     timer.stop();
     std::cout << "(" << timer.elapsed() << " ms.)" << std::endl;
     std::cout << "select from " << tableName << " (ok)\n";
@@ -826,6 +860,11 @@ private:
   int limitNum;
   std::string orderBy;
   Expressions expressionList;
+
+  // Join part
+  Keywords joinType; // left or right
+  std::string joinTableName;
+  std::vector<Join> joins;
 };
 
 class UpdateStatement : public Statement {
@@ -1081,7 +1120,7 @@ public:
 
   const char *getStatementName() const { return "Show Statement"; }
 
-  StatusResult run(std::ostream &aStream, Database* &dbptr) const {
+  StatusResult run(std::ostream &aStream, Database *&dbptr) const {
     StatusResult theResult = dbptr->showIndexes();
     std::cout << "show indexes (ok)" << std::endl;
     return theResult;

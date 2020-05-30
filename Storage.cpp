@@ -271,13 +271,17 @@ StatusResult BlockVisitor::operator()(Storage &aStorage, Row &aRow,
                                       uint32_t aBlockNum) {
   StorageBlock aBlock;
   aStorage.readBlock(aBlock, aBlockNum);
-  if (aBlock.header.pos == 0 && aBlock.header.type == 'D') {
+  if (aBlock.header.pos == 0 && aBlock.header.type == 'D' && aBlock.header.pos == 0) {
     if (filters.getCount() == 0) {
       aStorage.load(aRow, aBlockNum);
-      return StatusResult();
+      if (aRow.tableName == tableName) {
+        return StatusResult();
+      } else {
+        return StatusResult(readError);
+      }
     }
     aStorage.load(aRow, aBlockNum);
-    if (filters.matches(aRow.data_map)) {
+    if (filters.matches(aRow.data_map) && aRow.tableName == tableName) {
       return StatusResult();
     }
   }
