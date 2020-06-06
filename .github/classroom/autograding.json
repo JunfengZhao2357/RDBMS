@@ -7,7 +7,7 @@
       "input": "",
       "output": "7 rows in set",
       "comparison": "included",
-      "timeout": 1,
+      "timeout": 10,
       "points": 0
     },
     {
@@ -17,7 +17,7 @@
       "input": "",
       "output": "7 rows in set",
       "comparison": "included",
-      "timeout": 1,
+      "timeout": 10,
       "points": 0
     },
     {
