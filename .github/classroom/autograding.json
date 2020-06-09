@@ -29,26 +29,6 @@
       "comparison": "included",
       "timeout": 10,
       "points": null
-    },
-    {
-      "name": "Left Customer-Order",
-      "setup": "make",
-      "run": "export DB_PATH=/tmp && ./autograder",
-      "input": "create database LeftCustomerorder\r\nuse database LeftCustomerorder\r\n\r\nCREATE TABLE Customers (Customerid INT PRIMARY KEY, CustomerName VARCHAR(100), ZIPCODE INT)\r\ninsert into Customers (Customerid, CustomerName, ZIPCODE) values (1,'Rick',90091), (3,'CG',90083), (4,'Savya',90080), (6,'Tom',90096), (7,'Lucy',90098), (9,'Patricia',90089),(10,'Barbara',90095)\r\n\r\nCREATE TABLE Orders (Orderid INT PRIMARY KEY, Customerid INT, OrderAmount INT)\r\ninsert into Orders (Orderid, Customerid, OrderAmount) values (1, 4, 200), (2, 9, 1000), (9, 6, 300), (10, 10, 40000), (15,3, 500)\r\n\r\nselect CustomerName, ZIPCODE, OrderAmount from Customers left join Orders on Orders.Orderid = Customers.Customerid\r\nquit",
-      "output": "7 rows in set",
-      "comparison": "included",
-      "timeout": 10,
-      "points": 10
-    },
-    {
-      "name": "Right Customer-Order",
-      "setup": "make",
-      "run": "export DB_PATH=/tmp && ./autograder",
-      "input": "create database LeftCustomerorder\r\nuse database LeftCustomerorder\r\n\r\nCREATE TABLE Customers (Customerid INT PRIMARY KEY, CustomerName VARCHAR(100), ZIPCODE INT)\r\ninsert into Customers (Customerid, CustomerName, ZIPCODE) values (1,'Rick',90091), (3,'CG',90083), (4,'Savya',90080), (6,'Tom',90096), (7,'Lucy',90098), (9,'Patricia',90089),(10,'Barbara',90095)\r\n\r\nCREATE TABLE Orders (Orderid INT PRIMARY KEY, Customerid INT, OrderAmount INT)\r\ninsert into Orders (Orderid, Customerid, OrderAmount) values (1, 4, 200), (2, 9, 1000), (9, 6, 300), (10, 10, 40000), (15,3, 500)\r\n\r\nselect CustomerName, ZIPCODE, OrderAmount from Customers right join Orders on Orders.Orderid = Customers.Customerid\r\nquit",
-      "output": "5 rows in set",
-      "comparison": "included",
-      "timeout": 10,
-      "points": 10
     }
   ]
 }
