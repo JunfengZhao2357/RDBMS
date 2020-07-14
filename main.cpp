@@ -72,8 +72,8 @@ int main(int argc, const char *argv[]) {
   ECE141::AppCmdProcessor theAppProcessor(&theSQLProcessor);
 
   ECE141::StatusResult theResult;
-  // argc = 2; // for debug
-  // argv[1] = "command.txt"; // for debug
+   argc = 2; // for debug
+   argv[1] = "command.txt"; // for debug
   if (argc > 1) { // read from txt file
     std::ifstream infile(argv[1]);
     bool running = true;
