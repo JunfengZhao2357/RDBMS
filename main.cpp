@@ -63,6 +63,7 @@ ECE141::StatusResult handleInput(std::istream &aStream,
 //----------------------------------------------
 
 int main(int argc, const char *argv[]) {
+  //Github test
   // Tester test;
   // test.indexTest();
   setenv("DB_PATH", "./tmp", 0);

@@ -8,38 +8,38 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug"/>
+				<Option working_dir="/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug"/>
+				<Option working_dir="/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug"/>
+				<Option working_dir="/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="RDBMS">
-				<Option output="/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/RDBMS" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug"/>
+				<Option output="/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/RDBMS" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -52,15 +52,15 @@
 					<Add directory="/Library/Frameworks"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 RDBMS"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 RDBMS"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="RDBMS/fast">
-				<Option output="/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/RDBMS" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug"/>
+				<Option output="/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/RDBMS" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
@@ -73,134 +73,134 @@
 					<Add directory="/Library/Frameworks"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 RDBMS/fast"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 RDBMS/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/AppProcessor.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/AppProcessor.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/AppProcessor.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/AppProcessor.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/AppStatement.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/AppStatement.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Attribute.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Attribute.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Attribute.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Attribute.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/CommandProcessor.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/CommandProcessor.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/CommandProcessor.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/CommandProcessor.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/DBProcessor.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/DBProcessor.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/DBProcessor.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/DBProcessor.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/DBStatement.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/DBStatement.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Database.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Database.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Database.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Database.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Errors.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Errors.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Filters.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Filters.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Filters.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Filters.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/FolderReader.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/FolderReader.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Helpers.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Helpers.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Index.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Index.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Index.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Index.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Row.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Row.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Row.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Row.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/SQLProcessor.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/SQLProcessor.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/SQLProcessor.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/SQLProcessor.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/SQLStatement.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/SQLStatement.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Schema.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Schema.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Schema.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Schema.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Statement.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Statement.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Statement.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Statement.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Storage.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Storage.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Storage.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Storage.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/StorageBlock.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/StorageBlock.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/StorageBlock.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/StorageBlock.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Tester.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Tester.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Timer.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Timer.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Tokenizer.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Tokenizer.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Tokenizer.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Tokenizer.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/Value.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/Value.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/View.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/View.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/keywords.hpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/keywords.hpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/main.cpp">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/main.cpp">
 			<Option target="RDBMS"/>
 		</Unit>
-		<Unit filename="/Users/zhaojunfeng/RDBMS/RDBMS/CMakeLists.txt">
+		<Unit filename="/Users/zhaojunfeng/CLionProjects/RDBMS/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

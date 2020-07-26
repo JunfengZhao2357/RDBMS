@@ -1,4 +1,4 @@
-# Install script for directory: /Users/zhaojunfeng/RDBMS/RDBMS
+# Install script for directory: /Users/zhaojunfeng/CLionProjects/RDBMS
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/zhaojunfeng/RDBMS/RDBMS/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/zhaojunfeng/CLionProjects/RDBMS/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
